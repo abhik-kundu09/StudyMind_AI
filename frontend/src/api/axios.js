@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = (import.meta.env.VITE_API_URL || "").replace("http://", "https://");
 
 const api = axios.create({
   baseURL: `${BASE_URL}/api/v1`,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true, // send httpOnly refresh cookie automatically
+  withCredentials: true,
 });
 
 // ── Request interceptor — attach access token ────────────────────────────────
@@ -43,7 +43,6 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        // Queue the request while a refresh is already in flight
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -58,7 +57,6 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Refresh token is sent automatically via httpOnly cookie
         const { data } = await axios.post(
           `${BASE_URL}/api/v1/auth/refresh`,
           {},
@@ -66,18 +64,13 @@ api.interceptors.response.use(
         );
 
         const newToken = data.access_token;
-
         useAuthStore.getState().setAccessToken(newToken);
-
         processQueue(null, newToken);
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-
-        // Refresh failed — log the user out
         useAuthStore.getState().logout();
-
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
