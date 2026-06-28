@@ -2,7 +2,6 @@ FROM python:3.14-slim
 
 WORKDIR /app
 
-# System deps required by PyMuPDF and FAISS
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -20,5 +19,8 @@ COPY . .
 RUN mkdir -p data/faiss_indexes
 
 EXPOSE 8000
+
+# Test import first so errors appear in build logs, not runtime logs
+RUN python -c "from app.main import app; print('Import OK')"
 
 CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
