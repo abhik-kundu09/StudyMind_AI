@@ -9,7 +9,6 @@ from app.ai.vector_store import faiss_manager
 from langchain_core.documents import Document
 
 
-
 def _run(coro):
     """Run an async coroutine from sync Celery task."""
     loop = asyncio.new_event_loop()
@@ -18,13 +17,13 @@ def _run(coro):
     finally:
         loop.close()
 
+
 @celery_app.task(bind=True, max_retries=2, default_retry_delay=30)
 def process_pdf(self: Task, doc_id: str, user_id: str, filename: str, file_bytes_hex: str):
     from motor.motor_asyncio import AsyncIOMotorClient
     from app.core.config import settings
 
     async def _process():
-        # Create a fresh Motor connection — Celery has no FastAPI lifespan
         client = AsyncIOMotorClient(settings.MONGODB_URI)
         db = client[settings.MONGODB_DB_NAME]
         docs_col = db["documents"]
