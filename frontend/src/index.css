@@ -1,0 +1,107 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+@theme {
+  /* ── Noir Gold — Black / Peach / Gold / Silver Luxury Dark ─────────────── */
+  --color-ethereal-bg:          #0A0908;
+  --color-ethereal-surface:     #0E0D0B;
+  --color-ethereal-panel:       rgba(20, 17, 12, 0.7);
+  --color-ethereal-panel-solid: #14110C;
+  --color-ethereal-neon:        #D4A856;   /* primary gold accent */
+  --color-ethereal-accent:      #E8B894;   /* peach accent */
+  --color-ethereal-purple:      #C0C0C8;   /* silver, replaces old purple slot */
+  --color-ethereal-border:      rgba(212, 168, 86, 0.15);
+  --color-ethereal-border-hover:rgba(212, 168, 86, 0.35);
+  --color-ethereal-text:        #F0E6D2;
+  --color-ethereal-muted:       rgba(200, 190, 170, 0.55);
+  --color-ethereal-dim:         rgba(160, 150, 130, 0.3);
+
+  /* ── Silver secondary ramp (for muted UI, dividers, inactive states) ──── */
+  --color-silver:               #C8C8D0;
+  --color-silver-dim:           rgba(192, 192, 200, 0.18);
+
+  /* ── Typography ──────────────────────────────────────────────────────── */
+  --font-display: "Inter", "SF Pro Display", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "Fira Code", monospace;
+
+  /* ── Blur ────────────────────────────────────────────────────────────── */
+  --blur-glass: 12px;
+  --blur-heavy: 24px;
+}
+
+/* ── Base reset ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #0A0908;
+  color: #F0E6D2;
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(212, 168, 86, 0.25); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212, 168, 86, 0.45); }
+
+/* ── Glass card ──────────────────────────────────────────────────────────── */
+.glass {
+  background: rgba(20, 17, 12, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 168, 86, 0.15);
+  border-radius: 16px;
+}
+.glass:hover {
+  border-color: rgba(212, 168, 86, 0.3);
+}
+
+/* ── Gold glow text ──────────────────────────────────────────────────────── */
+.text-neon { color: #D4A856; }
+.text-peach { color: #E8B894; }
+.text-silver { color: #C8C8D0; }
+
+/* ── Streaming cursor pulse ──────────────────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.cursor-blink {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #D4A856;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 0.8s ease-in-out infinite;
+  border-radius: 1px;
+}
+
+/* ── Message fade-in ─────────────────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.msg-enter {
+  animation: fadeSlideUp 0.25s ease-out forwards;
+}
+
+/* ── Source card shimmer ─────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(212,168,86,0.03) 25%,
+    rgba(212,168,86,0.08) 50%,
+    rgba(212,168,86,0.03) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 2s infinite;
+}

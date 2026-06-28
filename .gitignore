@@ -1,0 +1,37 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+.env.local
+.env.production
+
+# Storage
+backend/storage/faiss_indexes/
+backend/storage/uploads/
+
+# FAISS indexes (ephemeral, user-generated)
+backend/data/
+
+# Logs
+*.log
+celery*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+PROGRESS.md
+UI_DESIGN.md
