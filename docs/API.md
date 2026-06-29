@@ -1,9 +1,9 @@
 # StudyMind AI — API Reference
 
-Base URL (local): `http://localhost:8000/api/v1`
-Base URL (production): `https://your-render-app.onrender.com/api/v1`
+Base URL: `http://localhost:8000/api/v1`
 
-Interactive docs: `{base_url_without_api_v1}/docs` (Swagger UI)
+
+Interactive docs: `http://localhost:8000/docs` (Swagger UI)
 
 ---
 

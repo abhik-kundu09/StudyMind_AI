@@ -1,11 +1,10 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-// Always use the Vercel proxy — avoids CORS and mixed content issues
-const BASE_URL = "/api/v1";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: `${BASE_URL}/api/v1`,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
@@ -59,7 +58,7 @@ api.interceptors.response.use(
 
       try {
         const { data } = await axios.post(
-          "/api/v1/auth/refresh",
+          `${BASE_URL}/api/v1/auth/refresh`,
           {},
           { withCredentials: true }
         );

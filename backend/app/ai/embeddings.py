@@ -5,7 +5,7 @@ Groq does not provide an embeddings API, so we use a local model:
   all-MiniLM-L6-v2 — fast, lightweight, 384-dim, excellent for semantic search.
   Downloads once (~90MB), runs entirely locally, zero API cost.
 
-Lazy-loaded on first use to keep startup RAM under Render's 512MB free tier limit.
+Lazy-loaded on first use to keep startup RAM low.
 
 Exposes two methods used by vector_store.py:
   - embed_query(text)    : single string → List[float]

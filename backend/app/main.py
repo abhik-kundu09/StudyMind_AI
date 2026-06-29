@@ -14,8 +14,6 @@ from app.api.v1 import documents, progress, quiz, study_plan
 from app.api.v1.chat import router as chat_router
 from app.api.v1.flashcards import router as flashcard_router
 
-# Build: v5
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,8 +32,8 @@ app.add_middleware(SlowAPIMiddleware)
 # ── CORS ──────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[settings.FRONTEND_ORIGIN],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -52,9 +50,9 @@ app.include_router(flashcard_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
-    return {"message": "StudyMind AI API is running", "version": "2.0"}
+    return {"message": "StudyMind AI API is running"}
 
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "version": "2.0"}
+    return {"status": "healthy"}

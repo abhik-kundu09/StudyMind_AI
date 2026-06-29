@@ -7,15 +7,9 @@ Design:
       data/faiss_indexes/{user_id}/index.pkl
   - Up to MAX_CACHED_INDEXES indexes are kept in RAM (LRU eviction).
   - Indexes are loaded from disk on first access and saved after mutation.
-  - Returns None gracefully when a user has no index yet (before first PDF upload).
-
-Thread safety:
-  - Safe for single-worker uvicorn (dev). In production with multiple
-    Celery workers, index writes should go through a task queue to avoid
-    concurrent write corruption. Noted as future hardening.
+  - Returns None gracefully when a user has no index yet.
 """
 
-import os
 from collections import OrderedDict
 from pathlib import Path
 
@@ -24,7 +18,6 @@ from langchain_core.documents import Document
 
 from app.ai.embeddings import get_embeddings
 
-# ── Config ────────────────────────────────────────────────────────────────────
 MAX_CACHED_INDEXES = 10
 INDEX_BASE_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "faiss_indexes"
 
@@ -33,8 +26,6 @@ class FAISSManager:
     def __init__(self) -> None:
         self._cache: OrderedDict[str, FAISS] = OrderedDict()
         INDEX_BASE_DIR.mkdir(parents=True, exist_ok=True)
-
-    # ── Internal helpers ──────────────────────────────────────────────────────
 
     def _index_path(self, user_id: str) -> Path:
         return INDEX_BASE_DIR / user_id
@@ -64,29 +55,23 @@ class FAISSManager:
             self._cache[user_id] = index
             self._cache.move_to_end(user_id)
 
-    # ── Public API ────────────────────────────────────────────────────────────
-
     def get_index(self, user_id: str) -> FAISS | None:
         if user_id in self._cache:
             self._cache.move_to_end(user_id)
             return self._cache[user_id]
-
         if self._has_saved_index(user_id):
             index = self._load_from_disk(user_id)
             self._put_cache(user_id, index)
             return index
-
         return None
 
     def add_documents(self, user_id: str, documents: list[Document]) -> None:
         existing = self.get_index(user_id)
-
         if existing is None:
             index = FAISS.from_documents(documents, get_embeddings())
         else:
             existing.add_documents(documents)
             index = existing
-
         self._save_to_disk(user_id, index)
         self._put_cache(user_id, index)
 
@@ -101,13 +86,11 @@ class FAISSManager:
         index = self.get_index(user_id)
         if index is None:
             return []
-
         search_kwargs: dict = {"k": k}
         if filter is not None:
             search_kwargs["filter"] = filter
         if fetch_k is not None:
             search_kwargs["fetch_k"] = fetch_k
-
         return index.similarity_search(query, **search_kwargs)
 
     def delete_index(self, user_id: str) -> None:
@@ -118,5 +101,4 @@ class FAISSManager:
             shutil.rmtree(path)
 
 
-# ── Module-level singleton ────────────────────────────────────────────────────
 faiss_manager = FAISSManager()

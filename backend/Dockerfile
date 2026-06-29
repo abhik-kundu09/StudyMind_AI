@@ -18,8 +18,6 @@ COPY . .
 
 RUN mkdir -p data/faiss_indexes
 
-RUN chmod +x start.sh
+EXPOSE 8000
 
-EXPOSE 7860
-
-CMD ["./start.sh"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

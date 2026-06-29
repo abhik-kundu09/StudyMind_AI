@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://abhik021-studymind-ai-backend.hf.space/api/:path*"
-    }
-  ]
-}
